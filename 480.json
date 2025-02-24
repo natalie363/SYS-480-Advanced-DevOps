@@ -1,0 +1,5 @@
+{
+    "vcenter_server": "vcenter02.eckles.local",
+    "vm_host": "super3.eckles.local",
+    "datastore": "datastore1"
+}
