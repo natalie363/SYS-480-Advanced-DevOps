@@ -1,5 +1,10 @@
 {
     "vcenter_server": "vcenter02.eckles.local",
     "vm_host": "super3.eckles.local",
-    "datastore": "datastore1"
+    "datastore": "datastore1",
+    "base_folder": "Base VMs",
+    "output_folder": "mod5 clones",
+    "snapshot": "base",
+    "default_network": "480-WAN" 
+
 }
