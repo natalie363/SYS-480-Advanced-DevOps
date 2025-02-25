@@ -44,6 +44,7 @@ function Select-VM([string] $folder){
         [int] $index_selected = Read-Host "Which index number [x] do you wish to pick?"
         if($index_selected -ge $index -or $index_selected -le 0){
             Write-Host "Selection is out of range" -ForegroundColor "Red"
+            Break
         }else{
             $selected_vm = $vms[$index_selected -1]
             return $selected_vm
@@ -51,6 +52,7 @@ function Select-VM([string] $folder){
     }
     catch{
         Write-Host "Invalid datatype, please input an integer" -ForegroundColor "Red"
+        Break
     }
 
 }
