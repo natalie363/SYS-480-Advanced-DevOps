@@ -27,9 +27,31 @@ function Get-480Config([string] $config_path){
 function Select-VM([string] $folder){
     
     $selected_vm = $null
+    $selected_folder = $null
+    try{
+        $folders = Get-Folder -Type VM
+        [int] $folder_index = 1
+        Write-Host "VM Folders:"
+        foreach ($folder in $folders){
+            Write-Host [$folder_index] $folder
+            $folder_index += 1
+        }
+        [int] $index_selected = Read-Host "Which folder index number [x] do you wish to pick?"
+        if($index_selected -ge $folder_index -or $index_selected -le 0){
+            Write-Host "Selection is out of range" -ForegroundColor "Red"
+            Break
+        }else{
+            $selected_folder = $folders[$index_selected -1]
+        }
+    }
+    catch{
+        Write-Host "Invalid datatype, please input an integer" -ForegroundColor "Red"
+        Break
+    }
 
     try{
-        $vms = Get-VM -Location $folder
+        Write-Host "`nVMs within" $selected_folder
+        $vms = Get-VM -Location $selected_folder
         [int] $index = 1
         foreach($vm in $vms){
             Write-Host [$index] $vm.Name
@@ -41,7 +63,7 @@ function Select-VM([string] $folder){
 
     }
     try{
-        [int] $index_selected = Read-Host "Which index number [x] do you wish to pick?"
+        [int] $index_selected = Read-Host "Which VM index number [x] do you wish to pick?"
         if($index_selected -ge $index -or $index_selected -le 0){
             Write-Host "Selection is out of range" -ForegroundColor "Red"
             Break
@@ -81,4 +103,67 @@ function Deploy-Clone([string] $confPath){
     else {
         write-host "Invalid selection, program ending"
         }
+}
+
+function New-Network([string] $confpath){
+    $conf = Get-480Config -config_path $confPath
+    $net_name = Read-Host "Enter the name for your new network"
+    New-VirtualSwitch -VMHost $conf.vm_host -Name $net_name
+    New-VirtualPortGroup -VirtualSwitch $net_name -Name $net_name
+}
+
+function Get-NetworkDetails(){
+    $selected_vm = Select-VM
+    $adapter_details = Get-NetworkAdapter -VM $selected_vm 
+    write-host `n"Network: " -foregroundColor Green -NoNewline
+    write-host $adapter_details.NetworkName
+    write-host "MAC Address: " -foregroundColor Green -NoNewline
+    write-host $adapter_details.MacAddress
+    write-host "IP Address: " -foregroundColor Green -NoNewline
+    write-host $selected_vm.guest.ipaddress[0]
+}
+
+function Start-SingleVM(){
+    $selected_vm = Select-VM
+    Start-VM -VM $selected_vm
+}
+
+function Stop-SingleVM(){
+    $selected_vm = Select-VM
+    Stop-VM -VM $selected_vm -Confirm:$false 
+}
+
+function Set-Network(){
+    $selected_vm = Select-VM
+    $all_adapters = Get-NetworkAdapter -VM $selected_vm
+    $networks = Get-VirtualNetwork
+    [int] $net_index = 1
+    Write-Host "VM Networks:"
+            foreach ($network in $networks){
+                Write-Host [$net_index] $network
+                $net_index += 1
+            }
+    :label1 foreach ($adapter in $all_adapters){
+        $index_selected = $null
+        try{
+            Write-Host "Setting adapter:" $adapter.Name -foregroundColor yellow
+            Write-Host "0 or [Enter] to leave the adapter disconnected and move to the next one!"
+            [int] $index_selected = Read-Host "Which network index number [x] do you wish to pick?" 
+            if($index_selected -eq 0){
+                continue label1
+            }
+            elseif($index_selected -ge $net_index -or $index_selected -le 0){
+                Write-Host "Selection is out of range" -ForegroundColor "Red"
+                Break
+            }else{
+                $selected_net = $networks[$index_selected -1]
+            }
+        }
+        catch{
+            Write-Host "Invalid datatype, please input an integer" -ForegroundColor "Red"
+            Break
+        }
+
+        $adapter | Set-NetworkAdapter -NetworkName $selected_net -StartConnected:$true -Confirm:$false
+    }
 }
