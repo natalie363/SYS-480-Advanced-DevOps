@@ -8,7 +8,7 @@ $confPath = "/home/eckles/SYS-480-Advanced-DevOps/480.json"
 
 #Deploy-Clone -conf $confPath
 #New-Network -conf $confPath
-#Get-NetworkDetails
+Get-NetworkDetails
 #Start-SingleVM
 #Stop-SingleVM
-Set-Network
+#Set-Network

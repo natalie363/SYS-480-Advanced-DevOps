@@ -118,7 +118,7 @@ function Get-NetworkDetails(){
     write-host `n"Network: " -foregroundColor Green -NoNewline
     write-host $adapter_details.NetworkName
     write-host "MAC Address: " -foregroundColor Green -NoNewline
-    write-host $adapter_details.MacAddress
+    write-host $adapter_details.MacAddress[0]
     write-host "IP Address: " -foregroundColor Green -NoNewline
     write-host $selected_vm.guest.ipaddress[0]
 }
