@@ -5,6 +5,6 @@
     "base_folder": "Base VMs",
     "output_folder": "BlueNet",
     "snapshot": "base",
-    "default_network": "480-WAN" 
+    "default_network": "internal" 
 
 }

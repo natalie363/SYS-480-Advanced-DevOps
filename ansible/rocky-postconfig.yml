@@ -1,0 +1,61 @@
+- name: rocky config
+  hosts: rocky
+  tasks: 
+    - name: create the .ssh directory
+      file: 
+        path: "/home/{{ ansible_user }}/.ssh"
+        state: directory
+        mode: 0700
+
+    - name: create auth_keys file
+      file: 
+        path: "/home/{{ ansible_user }}/.ssh/authorized_keys"
+        state: touch
+        mode: 0644
+
+    - name: append key
+      blockinfile: 
+        dest: "/home/{{ ansible_user }}/.ssh/authorized_keys"
+        block: "{{ public_key }}"
+
+    - name: create suudoers file
+      file:
+        path: /etc/sudoers.d/480
+        state: touch
+        mode: 0440
+      become: yes
+
+    - name: sudoers file entry
+      blockinfile:
+        dest: /etc/sudoers.d/480
+        block: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL"
+      become: yes
+
+    - name: set hostname
+      hostname:
+        name: "{{ hostname }}"
+      become: yes
+
+    - name: set host file hostname
+      lineinfile:
+        path: /etc/hosts
+        line: '127.0.0.1 {{ hostname }}'
+      become: yes
+
+    - name: nmcli
+      nmcli:
+        conn_name: "{{ device }}"
+        ip4: "{{ lan_ip }}/24"
+        gw4: "{{ gateway }}"
+        state: present
+        type: ethernet
+        dns4:
+          - "{{ name_server }}"
+          - "{{ gateway }}"
+        method4: manual
+      become: yes
+
+    - name: restart
+      ansible.builtin.shell: "sleep 5 && shutdown -r"
+      become: yes
+     
