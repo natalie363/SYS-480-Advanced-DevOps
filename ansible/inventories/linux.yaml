@@ -11,6 +11,15 @@ rocky:
       hostname: rocky-3
       lan_ip: 10.0.5.12
 
+ubuntu:
+  hosts:
+    10.0.5.79:
+      hostname: ubuntu-1
+      lan_ip: 10.0.5.30
+    10.0.5.78:
+      hostname: ubuntu-2
+      lan_ip: 10.0.5.31
+
   vars:
     public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8B9Bi/YmS5ev59j+Aw7aQam9xNcPYW8fkIQJoQUtz8n+awIHH8G7KuChIoxKIIs/Wz/n62YHqJnV35nouMdXML7M9N3b2/fp5r6yfGAHZgh8+NEwhnGAcEixSPCq2aPw4BBzbVfxX3Fi3sc8HQQViQM+myFMpFMUSzTKEpBCajbRJh7n5b7kjbuwnFWZG/4y5bjPA38itcT8NwxtMxEXILKpRBe4IF93gecYRyjK3tM20fY/Sc9WH6CYHVSlKkQKaXH13/Wt5d4fr/5gTwvVey/7ScARxz7qnspvwAtlSibzLBOosoPttfaVHx8xPuq20dm1dXp+v8eLucb+m4YmFFcxXmxsWlY0xsA7A6rHwRmR4MfPp8Khc1qaAXJclYusu74dW9ZSJgiQWVGADOEoJMaTgdqF/2oZ/grvqu5yFpgl4Cju8cC8oT4nVp7YH7oD3caEdIpe2UEFneqQ/f71A1iqlK5hgsg1LpUJUGGq4E/zs9JzxE02SDxTKtzfCUG0= eckles@xubuntu-wan"
     ansible_user: deployer
