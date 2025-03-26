@@ -2,60 +2,60 @@
   hosts: rocky
   tasks: 
     - name: create the .ssh directory
-      file: 
-        path: "/home/{{ ansible_user }}/.ssh"
-        state: directory
-        mode: 0700
+      file: # create a file or directory (specified in the state option)
+        path: "/home/{{ ansible_user }}/.ssh" # path at which it will be created
+        state: directory # create as a directory
+        mode: 0700 # owner has rwx perms, nobody else does
 
     - name: create auth_keys file
       file: 
         path: "/home/{{ ansible_user }}/.ssh/authorized_keys"
-        state: touch
-        mode: 0644
+        state: touch # create as a folder
+        mode: 0644 # everyone can read, owner can write, nobody can execute
 
     - name: append key
-      blockinfile: 
-        dest: "/home/{{ ansible_user }}/.ssh/authorized_keys"
-        block: "{{ public_key }}"
+      blockinfile: # add one or more lines at a time to a file
+        dest: "/home/{{ ansible_user }}/.ssh/authorized_keys" # file to insert text into
+        block: "{{ public_key }}" # text to insert
 
     - name: create suudoers file
       file:
         path: /etc/sudoers.d/480
         state: touch
-        mode: 0440
-      become: yes
+        mode: 0440 # owner and group can read, no other perms granted
+      become: yes # use sudo perms
 
     - name: sudoers file entry
-      blockinfile:
-        dest: /etc/sudoers.d/480
-        block: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL"
-      become: yes
+      blockinfile: # add one or more lines at a time to a file
+        dest: /etc/sudoers.d/480 # file to insert text into
+        block: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL" # text to insert
+      become: yes # use sudo perms
 
     - name: set hostname
-      hostname:
-        name: "{{ hostname }}"
-      become: yes
+      hostname: # sets the hostname of the system
+        name: "{{ hostname }}" # hostname to use
+      become: yes # use sudo perms
 
     - name: set host file hostname
-      lineinfile:
-        path: /etc/hosts
-        line: '127.0.0.1 {{ hostname }}'
-      become: yes
+      lineinfile: # checks if the specified line is in the file, adds it if not
+        path: /etc/hosts # file to check
+        line: '127.0.0.1 {{ hostname }}' # line to check for/add
+      become: yes # use sudo perms
 
     - name: nmcli
-      nmcli:
-        conn_name: "{{ device }}"
-        ip4: "{{ lan_ip }}/24"
-        gw4: "{{ gateway }}"
-        state: present
-        type: ethernet
-        dns4:
+      nmcli: # sets the networking details
+        conn_name: "{{ device }}" # ens network adapter
+        ip4: "{{ lan_ip }}/24" # ip address to use
+        gw4: "{{ gateway }}" # gateway to use
+        state: present # creates the device if it doesn't already exist
+        type: ethernet # network type
+        dns4: # dns info
           - "{{ name_server }}"
           - "{{ gateway }}"
-        method4: manual
-      become: yes
+        method4: manual # no dhcp
+      become: yes # use sudo perms
 
     - name: restart
-      ansible.builtin.shell: "sleep 5 && shutdown -r"
-      become: yes
+      ansible.builtin.shell: "sleep 5 && shutdown -r" # runs shell commands, tells machine to sleep for 5 seconds then restart
+      become: yes # use sudo perms
      

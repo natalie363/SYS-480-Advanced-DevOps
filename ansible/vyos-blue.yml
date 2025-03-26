@@ -1,18 +1,17 @@
-- name: vyos network config
-  hosts: vyos
+- name: vyos network config # name of the overall play
+  hosts: vyos # machines that will be impacted by the play
   tasks:
-  - name: retrieve vyos version info
-    vyos_command: 
-      commands: show version
-    register: version
+  - name: retrieve vyos version info # first task
+    vyos_command: # uses the vyos command module (won't change config)
+      commands: show version # runs the command 'show version'
+    register: version # saves the output of the command to a variable
   - debug:
-      var: version.stdout_lines
+      var: version.stdout_lines # prints the output from version variable to the screen
 
-  - name: configure vyos dhcp
-    vyos_config:
-      save: yes
-      lines:
-      #- set service dhcp-server global-parameters 'local-address {{ lan_ip }}:'
+  - name: configure vyos dhcp # second task
+    vyos_config: # vyos config module will make actual changes to the config
+      save: yes # commits and saves the config
+      lines: # the commands that will be run on vyos
       - set service dhcp-server shared-network-name {{ shared_network }} authoritative
       - set service dhcp-server shared-network-name {{ shared_network }} subnet {{ lan_net }} default-router '{{ lan_ip }}'
       - set service dhcp-server shared-network-name {{ shared_network }} subnet {{ lan_net }} name-server '{{ dhcp_name_server }}'
