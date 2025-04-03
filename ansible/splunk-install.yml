@@ -1,0 +1,42 @@
+- name: splunk server config
+  hosts: 10.0.5.30
+  tasks: 
+    - name: download splunk
+      ansible.builtin.get_url:
+        url: https://download.splunk.com/products/splunk/releases/9.4.1/linux/splunk-9.4.1-e3bdab203ac8-linux-amd64.deb
+        dest: /home/deployer/splunkInstaller.deb
+        mode: '664'
+    - name: dpkg and install splunk
+      become: true
+      ansible.builtin.apt:
+        deb: /home/deployer/splunkInstaller.deb
+    - name: check splunk status
+      ansible.builtin.shell: dpkg --status splunk
+      register: result
+    - name: write result
+      ansible.builtin.debug:
+        var: result.stdout_lines
+    - name: create user account
+      become: true
+      ansible.builtin.copy:
+        src: files/user-seed.conf.j2
+        dest: /opt/splunk/etc/system/local/user-seed.conf
+    - name: set forwarding config
+      become: true
+      ansible.builtin.copy:
+        src: files/inputs.conf.j2
+        dest: /opt/splunk/etc/system/local/inputs.conf
+    - name: start splunk
+      become: true
+      ansible.builtin.shell: cd /opt/splunk/bin && ./splunk start --accept-license --no-prompt --answer-yes
+      register: splunkStartData
+    - name: write result
+      ansible.builtin.debug:
+        var: splunkStartData.stdout_lines
+    - name: autostart splunk on boot
+      become: true
+      ansible.builtin.shell: cd /opt/splunk/bin && ./splunk enable boot-start
+      register: bootStartResults
+    - name: write result
+      ansible.builtin.debug:
+        var: bootStartResults.stdout_liness

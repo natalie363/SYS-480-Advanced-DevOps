@@ -10,7 +10,7 @@
     - name: create auth_keys file
       file: 
         path: "/home/{{ ansible_user }}/.ssh/authorized_keys"
-        state: touch # create as a folder
+        state: touch # create as a file
         mode: 0644 # everyone can read, owner can write, nobody can execute
 
     - name: append key
@@ -18,7 +18,7 @@
         dest: "/home/{{ ansible_user }}/.ssh/authorized_keys" # file to insert text into
         block: "{{ public_key }}" # text to insert
 
-    - name: create suudoers file
+    - name: create sudoers file
       file:
         path: /etc/sudoers.d/480
         state: touch
