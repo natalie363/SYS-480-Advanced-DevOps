@@ -1,5 +1,5 @@
 - name: Debian Splunk Agent Install
-  hosts: 10.0.5.31
+  hosts: 10.0.5.30
   tasks:
   - name: create group splunkfwd
     become: true
@@ -14,8 +14,9 @@
   - name: make splunk home directory
     become: true
     ansible.builtin.file:
-      path: /opt/splunkforwarder
+      path: /opt/splunkforwarder/etc/system/local/
       state: directory
+      recurse: true
   - name: create user account
     become: true
     ansible.builtin.copy:
@@ -35,3 +36,29 @@
     ansible.builtin.shell: |
       chown -R splunkfwd:splunkfwd /opt/splunkforwarder 
       cd /opt/splunkforwarder/bin && ./splunk start --accept-license --no-prompt --answer-yes
+      cd /opt/splunkforwarder/bin && ./splunk add forward-server 10.0.5.32:9997
+  - name: test
+    become: true
+    ansible.builtin.expect:
+      command: /opt/splunkforwarder/bin/splunk add monitor /var/log
+      responses: 
+        "Splunk username":
+          - "{{ user }}"
+        "Password":
+          - "{{ pass }}"
+  #- name: add monitor
+   # become: true
+    #ansible.builtin.shell: | 
+    #  cd /opt/splunkforwarder/bin && ./splunk add monitor /var/log
+
+     # expect "Splunk username:"
+      #send "{{ user }}\n"
+
+      #expect "Password:"
+      #send "{{ pass }}\n"
+
+    #  exit 0
+    #register: forwarderConnection
+  #- name: write result
+   # ansible.builtin.debug:
+    #  var: forwarderConnection.stdout_lines

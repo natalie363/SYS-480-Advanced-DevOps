@@ -1,5 +1,5 @@
 - name: splunk server config
-  hosts: 10.0.5.30
+  hosts: 10.0.5.32
   tasks: 
     - name: download splunk
       ansible.builtin.get_url:
@@ -39,4 +39,4 @@
       register: bootStartResults
     - name: write result
       ansible.builtin.debug:
-        var: bootStartResults.stdout_liness
+        var: bootStartResults.stdout_lines
