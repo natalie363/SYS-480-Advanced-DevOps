@@ -37,7 +37,7 @@
       chown -R splunkfwd:splunkfwd /opt/splunkforwarder 
       cd /opt/splunkforwarder/bin && ./splunk start --accept-license --no-prompt --answer-yes
       cd /opt/splunkforwarder/bin && ./splunk add forward-server 10.0.5.32:9997
-  - name: test
+  - name: add monitor
     become: true
     ansible.builtin.expect:
       command: /opt/splunkforwarder/bin/splunk add monitor /var/log
@@ -46,19 +46,4 @@
           - "{{ user }}"
         "Password":
           - "{{ pass }}"
-  #- name: add monitor
-   # become: true
-    #ansible.builtin.shell: | 
-    #  cd /opt/splunkforwarder/bin && ./splunk add monitor /var/log
-
-     # expect "Splunk username:"
-      #send "{{ user }}\n"
-
-      #expect "Password:"
-      #send "{{ pass }}\n"
-
-    #  exit 0
-    #register: forwarderConnection
-  #- name: write result
-   # ansible.builtin.debug:
-    #  var: forwarderConnection.stdout_lines
+ 
