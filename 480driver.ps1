@@ -8,7 +8,9 @@ $conf = Get-480Config -config_path "/home/eckles/SYS-480-Advanced-DevOps/480.jso
 
 #Deploy-Clone -conf $confPath
 #New-Network -conf $confPath
-Get-NetworkDetails
 #Start-SingleVM
 #Stop-SingleVM
 #Set-Network
+
+Get-NetworkDetails
+Set-WindowsIP

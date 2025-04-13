@@ -118,7 +118,7 @@ function Get-NetworkDetails(){
     write-host `n"Network: " -foregroundColor Green -NoNewline
     write-host $adapter_details.NetworkName
     write-host "MAC Address: " -foregroundColor Green -NoNewline
-    write-host $adapter_details.MacAddress[0]
+    write-host $adapter_details.MacAddress
     write-host "IP Address: " -foregroundColor Green -NoNewline
     write-host $selected_vm.guest.ipaddress[0]
 }
@@ -166,4 +166,13 @@ function Set-Network(){
 
         $adapter | Set-NetworkAdapter -NetworkName $selected_net -StartConnected:$true -Confirm:$false
     }
+}
+function Set-WindowsIP(){
+    $selected_vm = Select-VM
+    $user = Read-Host "Enter the username for" $selected_vm.name 
+    $userPass = Read-Host -AsSecureString "Enter the password for $user"
+    $credObject = [pscredential]::New($user,$userPass)
+    $cmd1 = 'netsh interface ip set address "Ethernet0" static 10.0.5.5 255.255.255.0 10.0.5.2 1'
+    $cmd2 = 'netsh interface ip set dnsservers "Ethernet0" static 10.0.5.2'
+    Invoke-VMScript -VM $selected_vm -ScriptText "$cmd1 `r`n $cmd2" -GuestCredential $credObject
 }
