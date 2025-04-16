@@ -1,0 +1,8 @@
+Import-Module ActiveDirectory
+New-ADOrganizationalUnit -name blue1 -path "DC=blue,DC=local"
+New-ADOrganizationalUnit -name accounts -path "OU=blue1,DC=blue,DC=local"
+New-ADOrganizationalUnit -name computers -path "OU=blue1,DC=blue,DC=local"
+New-ADOrganizationalUnit -name groups -path "OU=accounts,OU=blue1,DC=blue,DC=local"
+New-ADOrganizationalUnit -name servers -path "OU=computers,OU=blue1,DC=blue,DC=local"
+New-ADOrganizationalUnit -name workstations -path "OU=computers,OU=blue1,DC=blue,DC=local"
+Add-ADGroupMember -Identity "Domain Admins" -Members "deployer"
